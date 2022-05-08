@@ -15,10 +15,10 @@ class BOOKDRIFT(DB):
         return self.select_one(sql)
 
     def find_by_lenderid(self, lenderid):
-        sql = 'SELECT driftId, collectionId, owerId, lenderId, newold, note, charge, driftTime, BC.createTime, bookName, ' \
+        sql = 'SELECT driftId, BD.collectionId, lenderId, newold, note, num, charge, driftTime, BC.createTime, bookName, ' \
               'thumbUrl, author, publishTime, publisher, price, BD.state ' \
               'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
-              'ON BD.lenderid={} AND BD.collectionId=BC.collectionId' \
+              'ON BD.lenderid={} AND BD.collectionId=BC.collectionId ' \
               'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId'\
             .format(lenderid)
 
@@ -26,6 +26,6 @@ class BOOKDRIFT(DB):
 
 
 if __name__ == '__main__':
-    print(BOOKDRIFT().findbyowneridandbookId(1, 525148))
-    print()
+    # print(BOOKDRIFT().findbyowneridandbookId(1, 525148))
+    print(BOOKDRIFT().find_by_lenderid(1))
     pass

@@ -39,5 +39,16 @@ def insert_drift_book():
 @bookDrift.route('/borrow', methods=['POST'])
 def borrow_drift_book():
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
+    response_data = {}
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
+
+
+@bookDrift.route('/getbyuserid', methods=['POST'])
+def get_book_drift_by_userid():
+    request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
+    response_data = {
+        'driftBooksInfo': bookDriftService.find_by_lenderid(request_data['userId'])
+    }
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
 
