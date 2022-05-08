@@ -59,7 +59,7 @@ def get_user_profile():
         userService.insertOne(data)
 
     response_data['userinfo'] = userService.finduserbyopenid(openid)
-    print(response_data['userinfo'])
+    # print(response_data['userinfo'])
 
     # 处理背景图片
     img = requests.get(userinfo['avatarUrl']).content
