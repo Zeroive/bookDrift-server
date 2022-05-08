@@ -15,12 +15,12 @@ class USER(DB):
               'country, language) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}")'.\
             format(data['openId'], data['sessionKey'], data['nickName'], data['avatarUrl'], data['city'],
                    data['gender'], data['province'], data['country'], data['language'])
-        self.inser_update_delete(sql)
+        self.insert_update_delete(sql)
 
     def updatebyuserid(self, map, openid):
         sql = 'UPDATE user_info SET addressCode="{}", latitude="{}", longitude="{}" WHERE openId="{}"'\
             .format(map['id'], map['location']['latitude'], map['location']['longitude'], openid)
-        self.inser_update_delete(sql)
+        self.insert_update_delete(sql)
         pass
 
     # 判断用户背景图片颜色深浅

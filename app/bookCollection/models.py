@@ -29,12 +29,12 @@ class BOOKCOLLECTION(DB):
               'WHERE collectionId={};'\
             .format(bookCollection['num'], bookCollection['state'], bookCollection['newold'], bookCollection['note'],
                     bookCollection['charge'], bookCollection['driftTime'], bookCollection['collectionId'])
-        self.inser_update_delete(sql)
+        self.insert_update_delete(sql)
 
     def insertOne(self, userId, bookId, num=1):
         sql = 'INSERT INTO book_collection(userId, bookId, state, num) VALUES ({}, {}, 1, {})'\
             .format(userId, bookId, num)
-        self.inser_update_delete(sql)
+        self.insert_update_delete(sql)
 
     def findallbyuserid(self, userid):
         sql = 'SELECT collectionId, BC.bookId, num, newold, note, charge, driftTime, BC.createTime, bookName, ' \

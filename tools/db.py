@@ -23,7 +23,7 @@ class DB:
         except Exception as e:
             pass
 
-    def inser_update_delete(self, sql):
+    def insert_update_delete(self, sql):
         try:
             self.cursor.execute(sql)
             self.db.commit()

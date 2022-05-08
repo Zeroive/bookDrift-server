@@ -13,7 +13,7 @@ class USERLIBRARY(DB):
             .format(libraryInfo['libraryName'], libraryInfo['longitude'], libraryInfo['latitude'], libraryInfo['introduction'],
                     libraryInfo['phone'], libraryInfo['detailAddress'], libraryInfo['province'], libraryInfo['city'],
                     libraryInfo['district'], libraryInfo['libraryId'])
-        self.inser_update_delete(sql)
+        self.insert_update_delete(sql)
         pass
 
 
