@@ -6,14 +6,6 @@ import time
 
 class USER(DB):
 
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def __del__(self):
-        self.db.close()
-        pass
-
     def finduserbyopenid(self, openid):
         sql = 'SELECT * FROM user_info WHERE openId = "{}"'.format(openid)
         return self.select_one(sql)

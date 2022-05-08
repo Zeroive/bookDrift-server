@@ -3,14 +3,6 @@ from tools.db import DB
 
 class BOOKDRIFT(DB):
 
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def __del__(self):
-        self.db.close()
-        pass
-
     def insert(self, ownerid, bookid):
         sql = 'INSERT INTO book_drift(ownerId, lenderId, bookId) VALUES ({}, {}, {})'\
             .format(ownerid, ownerid, bookid)

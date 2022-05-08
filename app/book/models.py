@@ -4,14 +4,6 @@ import time
 
 class BOOK(DB):
 
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def __del__(self):
-        self.db.close()
-        pass
-
     def findbyISBN(self, isbn):
         sql = 'SELECT * FROM book_library WHERE isbn = {} LIMIT 0,1'.format(isbn)
         self.cursor.execute(sql)

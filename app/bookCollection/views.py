@@ -29,4 +29,22 @@ def addbookcollection():
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
 
+@bookCollection.route('/findallbyuserid', methods=['POST'])
+def find_all_book_collection_by_userid():
+    request_data = json.loads(request.get_data().decode('utf-8'))
+    response_data = {
+        'collectionBooksInfo': bookCollectionService.findallbyuserid(request_data['userId'])
+    }
+    # print(response_data)
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
+
+@bookCollection.route('/updatebycollectionid', methods=['POST'])
+def update_book_collection_by_collectionid():
+    request_data = json.loads(request.get_data().decode('utf-8'))
+    # print(request_data)
+    bookCollectionService.update(request_data)
+    response_data = {}
+    # print(response_data)
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
+    pass

@@ -3,14 +3,6 @@ from tools.db import DB
 
 class USERLIBRARY(DB):
 
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def __del__(self):
-        self.db.close()
-        pass
-
     def findbyuserid(self, userId):
         sql = "SELECT * FROM user_library WHERE userId={}".format(userId)
         return self.select_one(sql)
