@@ -6,6 +6,10 @@ import time
 
 class USER(DB):
 
+    def find_by_userid(self, userid):
+        sql = 'SELECT * FROM user_info WHERE userId = "{}"'.format(userid)
+        return self.select_one(sql)
+
     def finduserbyopenid(self, openid):
         sql = 'SELECT * FROM user_info WHERE openId = "{}"'.format(openid)
         return self.select_one(sql)
@@ -52,7 +56,7 @@ if __name__ == '__main__':
     }
 
     time_start = time.time()  # 记录开始时间
-    USER().insertOne(data)
+    print(USER().find_by_userid(1))
     time_end = time.time()  # 记录结束时间
     time_sum = time_end - time_start  # 计算的时间差为程序的执行时间，单位为秒/s
     print(time_sum)

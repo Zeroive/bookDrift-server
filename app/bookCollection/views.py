@@ -18,11 +18,17 @@ def index():
 @bookCollection.route('/addbookcollection', methods=['POST'])
 def addbookcollection():
     request_data = json.loads(request.get_data().decode('utf-8'))
-    print(request_data)
-    openid = request_data['accessToken'].split('-')[0]
-    print(openid)
-    userid = userService.finduserbyopenid(openid)['userId']
-    bookCollectionService.insertOne(userid, request_data['bookId'])
+    # openid = request_data['accessToken'].split('-')[0]
+    # userid = userService.finduserbyopenid(openid)['userId']
+    userid = request_data['userId']
+    # 查看是否存在
+    if bookCollectionService.find_by_userid_bookid(userid, request_data['bookId']):
+        # 如果存在
+        bookCollectionService.add_book_num_by_userid_bookid(userid, request_data['bookId'])
+        pass
+    else:
+        # 否则新增
+        bookCollectionService.insertOne(userid, request_data['bookId'])
 
     response_data = {}
 

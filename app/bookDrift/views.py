@@ -3,12 +3,14 @@ from io import BytesIO
 import base64
 from app.bookDrift.models import BOOKDRIFT
 from app.user.models import USER
+from app.bookCollection.models import BOOKCOLLECTION
 import json
 import qrcode
 
 bookDrift = Blueprint('bookDrift', __name__, url_prefix='/bookdrift')
 bookDriftService = BOOKDRIFT()
 userService = USER()
+bookCollectionService = BOOKCOLLECTION()
 
 
 @bookDrift.route('/', methods=['POST'])
@@ -16,33 +18,47 @@ def index():
     return 'hello bookDrift'
 
 
+# 添加在漂书籍
 @bookDrift.route('/insert', methods=['POST'])
 def insert_drift_book():
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
     print(request_data)
-    bookDriftService.insert(request_data['ownerId'], request_data['bookId'])
+    collection_record = bookCollectionService.find_by_userid_bookid(request_data['ownerId'], request_data['bookId'])
+    if not collection_record:
+        # 表示未加入馆藏 加入馆藏
+        bookCollectionService.insertOne(request_data['ownerId'], request_data['bookId'])
+    collection_record = bookCollectionService.find_by_userid_bookid(request_data['ownerId'], request_data['bookId'])
+    # 插入book_drift
+    bookDriftService.insert(collection_record['collectionId'], request_data['ownerId'])
+    # 获得driftId
+    drift_record = bookDriftService.find_by_ownerid_bookId(collection_record['collectionId'], request_data['ownerId'])
 
-    record = bookDriftService.findbyowneridandbookId(request_data['ownerId'], request_data['bookId'])
-
-    img = qrcode.make('/bookdrift/borrow?driftid='+str(record['driftId']))
+    # 二维码
+    img = qrcode.make('/bookdrift/getdetail?driftid='+str(drift_record['driftId']))
     imgbyte = BytesIO()# 创建图片流
     img.save(imgbyte, format='PNG')
     imgbyte = imgbyte.getvalue()
     base64img = base64.b64encode(imgbyte)
     response_data = {
-        'base64img': base64img.decode()# 解析为字符串，直接转换会有b' '
+        'base64img': base64img.decode()# 解析为字符串，直接转换会有 b' '
     }
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
     # return Response(imgbyte, mimetype='image/png')  # 用自定义返回的数据及类型
 
 
+# 借出 改变书的状态 更新borrowerId
 @bookDrift.route('/borrow', methods=['POST'])
 def borrow_drift_book():
+    driftid = request.args.get('driftid', '')
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
+    borrowerid = request_data['userId']
+    print(driftid, borrowerid)
+    bookDriftService.update_borrowerid_by_driftid(driftid, borrowerid)
     response_data = {}
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
 
+# 根据userId获取在漂书籍
 @bookDrift.route('/getbyuserid', methods=['POST'])
 def get_book_drift_by_userid():
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
@@ -52,3 +68,10 @@ def get_book_drift_by_userid():
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
 
+# 查看放漂书籍详情
+@bookDrift.route('/getdetail', methods=['POST'])
+def get_book_drift_by_driftid():
+    driftid = request.args.get('driftid', '')
+    response_data = bookDriftService.find_driftbook_detail_by_driftid(driftid)
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
+    pass
