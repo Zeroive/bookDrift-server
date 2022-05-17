@@ -3,11 +3,11 @@ from math import sqrt
 
 
 class RECOMMENDER(DB):
-    # data：数据集，这里指users
+    # data：数据集，这里指users,从数据库获取
     # k：表示得出最相近的k的近邻
     # metric：表示使用计算相似度的方法
     # n：表示推荐book的个数
-    def __init__(self, data, k=3, metric='pearson', n=15):
+    def __init__(self, k=3, metric='pearson', n=15):
 
         self.k = k
         self.n = n
@@ -18,11 +18,10 @@ class RECOMMENDER(DB):
         self.metric = metric
         if self.metric == 'pearson':
             self.fn = self.pearson
-        if type(data).__name__ == 'dict':
-            self.data = data
+        # if type(data).__name__ == 'dict':
+        #     self.data = data
 
     def convertProductID2name(self, id):
-
         if id in self.productid2name:
             return self.productid2name[id]
         else:

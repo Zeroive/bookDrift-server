@@ -22,8 +22,9 @@ class USER(DB):
         self.insert_update_delete(sql)
 
     def updatebyuserid(self, map, openid):
-        sql = 'UPDATE user_info SET addressCode="{}", latitude="{}", longitude="{}" WHERE openId="{}"'\
-            .format(map['id'], map['location']['latitude'], map['location']['longitude'], openid)
+        sql = 'UPDATE user_info SET addressCode="{}", latitude="{}", longitude="{}", province="{}",' \
+              'city="{}", district="{}" WHERE openId="{}"'\
+            .format(map['id'], map['latitude'], map['longitude'], map['province'], map['city'], map['district'], openid)
         self.insert_update_delete(sql)
         pass
 

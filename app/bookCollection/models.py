@@ -21,7 +21,7 @@ class BOOKCOLLECTION(DB):
                 flag = False
                 break
 
-        DBdate = self.findonebylibraryId_bookId_id(collectionId=bookCollection['collectionId'])
+        DBdate = self.find_by_collectionid(bookCollection['collectionId'])
 
         if flag and DBdate['state'] == 0:
             bookCollection['state'] = 1
@@ -35,7 +35,7 @@ class BOOKCOLLECTION(DB):
     def insertOne(self, userid, bookid, num=0, state=0):
         sql = 'INSERT INTO book_collection(userId, bookId, state, num) ' \
               'VALUES ({}, {}, {}, {})' \
-            .format(userid, bookid, state, (num, 1)[num == 0])
+            .format(userid, bookid, state, num)
         self.insert_update_delete(sql)
 
     def findallbyuserid(self, userid):
@@ -51,8 +51,8 @@ class BOOKCOLLECTION(DB):
         sql = 'UPDATE book_collection SET state={} WHERE collectionId={}'.format(state, collectionid)
         self.insert_update_delete(sql)
 
-    def add_book_num_by_userid_bookid(self, userid, bookid, num=1):
-        sql = 'UPDATE book_collection SET num={} WHERE userId={} AND bookId={}'.format('num+'+str(num), userid, bookid)
+    def change_book_num_by_userid_bookid(self, userid, bookid, num=1):
+        sql = 'UPDATE book_collection SET num={} WHERE userId={} AND bookId={}'.format('num+0'+str(num), userid, bookid)
         self.insert_update_delete(sql)
 
 
@@ -62,5 +62,6 @@ if __name__ == '__main__':
     # time_end = time.time()  # 记录结束时间
     # time_sum = time_end - time_start  # 计算的时间差为程序的执行时间，单位为秒/s
     # print(time_sum)
-    print(BOOKCOLLECTION().find_by_collectionid(2))
+    # print(BOOKCOLLECTION().find_by_collectionid(2))
+    BOOKCOLLECTION().change_book_num_by_userid_bookid(1, 25, 10)
     pass

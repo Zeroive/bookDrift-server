@@ -24,19 +24,20 @@ class BOOKDRIFT(DB):
 
         return self.select_all(sql)
 
-    def update_borrowerid_by_driftid(self, driftid, borrowerid):
-        sql = 'UPDATE book_drift SET borrowerId={} WHERE driftId={}'.format(borrowerid, driftid)
+    def update_borrowerid_by_driftid(self, driftid, borrowerid, state):
+        sql = 'UPDATE book_drift SET borrowerId={},state={} WHERE driftId={}'.format(borrowerid, state, driftid)
         self.insert_update_delete(sql)
 
     def find_driftbook_detail_by_driftid(self, driftid):
         sql = 'SELECT driftId, BD.createTime, BD.state, lenderId, borrowerId, BC.userId ownerId, BC.bookId,' \
               'BC.newold, BC.note, BC.charge, BC.driftTime, UI1.nickName lenderName, UI1.avatarUrl lenderAvatarUrl,' \
               'UI2.nickName borrowerName, UI2.avatarUrl borrowerAvatarUrl, bookName, thumbUrl, author, publisher,' \
-              'price ' \
+              'price, UI2.avatarUrl borrowerAvatarUrl ' \
               'FROM book_drift as BD JOIN book_collection AS BC ON BD.collectionId=BC.collectionId ' \
               'JOIN user_info AS UI1 ON BD.lenderId = UI1.userId ' \
               'JOIN user_info AS UI2 ON BD.borrowerId = UI2.userId ' \
-              'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
+              'JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
+              'JOIN user_library AS UL ON BC.libraryId=UL.libraryId ' \
               'WHERE BD.driftId={}'.format(driftid)
         return self.select_one(sql)
         pass

@@ -27,6 +27,9 @@ def insert_drift_book():
     if not collection_record:
         # 表示未加入馆藏 加入馆藏
         bookCollectionService.insertOne(request_data['ownerId'], request_data['bookId'])
+    else:
+        # 存在馆藏 数量-1
+        bookCollectionService.change_book_num_by_userid_bookid(request_data['ownerId'], request_data['bookId'], -1)
     collection_record = bookCollectionService.find_by_userid_bookid(request_data['ownerId'], request_data['bookId'])
     # 插入book_drift
     bookDriftService.insert(collection_record['collectionId'], request_data['ownerId'])
@@ -46,14 +49,14 @@ def insert_drift_book():
     # return Response(imgbyte, mimetype='image/png')  # 用自定义返回的数据及类型
 
 
-# 借出 改变书的状态 更新borrowerId
+# 借入 改变书的状态 更新borrowerId
 @bookDrift.route('/borrow', methods=['POST'])
 def borrow_drift_book():
-    driftid = request.args.get('driftid', '')
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
     borrowerid = request_data['userId']
+    driftid = request_data['driftId']
     print(driftid, borrowerid)
-    bookDriftService.update_borrowerid_by_driftid(driftid, borrowerid)
+    bookDriftService.update_borrowerid_by_driftid(driftid, borrowerid, 1)
     response_data = {}
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
@@ -75,3 +78,21 @@ def get_book_drift_by_driftid():
     response_data = bookDriftService.find_driftbook_detail_by_driftid(driftid)
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
     pass
+
+
+# 根据driftid返回二维码
+@bookDrift.route('/onemoredrift', methods=['POST'])
+def get_drift_book_by_driftid():
+    request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
+    driftid = request_data['driftId']
+    # 二维码
+    img = qrcode.make('/bookdrift/getdetail?driftid=' + str(driftid))
+    imgbyte = BytesIO()  # 创建图片流
+    img.save(imgbyte, format='PNG')
+    imgbyte = imgbyte.getvalue()
+    base64img = base64.b64encode(imgbyte)
+    response_data = {
+        'base64img': base64img.decode()  # 解析为字符串，直接转换会有 b' '
+    }
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
+

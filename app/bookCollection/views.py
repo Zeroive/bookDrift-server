@@ -24,7 +24,7 @@ def addbookcollection():
     # 查看是否存在
     if bookCollectionService.find_by_userid_bookid(userid, request_data['bookId']):
         # 如果存在
-        bookCollectionService.add_book_num_by_userid_bookid(userid, request_data['bookId'])
+        bookCollectionService.change_book_num_by_userid_bookid(userid, request_data['bookId'])
         pass
     else:
         # 否则新增
