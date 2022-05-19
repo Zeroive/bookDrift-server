@@ -5,7 +5,8 @@ config = {
     'port': 3306,
     'user': 'root',
     'password': 'root',
-    'database': 'drift_books'
+    'database': 'drift_books',
+    'use_unicode': True
 }
 
 

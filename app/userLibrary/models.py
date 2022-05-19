@@ -2,6 +2,9 @@ from tools.db import DB
 
 
 class USERLIBRARY(DB):
+    def __init__(self):
+        DB.__init__(self)
+        self.table_name = 'user_library'
 
     def findbyuserid(self, userId):
         sql = "SELECT * FROM user_library WHERE userId={}".format(userId)

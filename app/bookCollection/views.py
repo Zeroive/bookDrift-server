@@ -38,8 +38,15 @@ def addbookcollection():
 @bookCollection.route('/findallbyuserid', methods=['POST'])
 def find_all_book_collection_by_userid():
     request_data = json.loads(request.get_data().decode('utf-8'))
+    books = bookCollectionService.findallbyuserid(request_data['userId'])
+    # 检查url可用性
+    for i in books:
+        if requests.get(i['thumbUrl']).status_code == 200:
+            i['isthumbUrlWork'] = True
+        else:
+            i['isthumbUrlWork'] = False
     response_data = {
-        'collectionBooksInfo': bookCollectionService.findallbyuserid(request_data['userId'])
+        'collectionBooksInfo': books
     }
     # print(response_data)
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
@@ -48,9 +55,17 @@ def find_all_book_collection_by_userid():
 @bookCollection.route('/updatebycollectionid', methods=['POST'])
 def update_book_collection_by_collectionid():
     request_data = json.loads(request.get_data().decode('utf-8'))
-    # print(request_data)
+    print(request_data)
     bookCollectionService.update(request_data)
     response_data = {}
     # print(response_data)
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
     pass
+
+
+@bookCollection.route('/getdetail', methods=['POST'])
+def get_collection_book_detail_by_driftid():
+    request_data = json.loads(request.get_data().decode('utf-8'))
+    response_data = bookCollectionService.find_collectionbook_detail_by_collectionid(request_data['collectionId'])
+    # print(response_data)
+    return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)

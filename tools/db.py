@@ -37,4 +37,16 @@ class DB:
 
     def select_all(self, sql):
         self.cursor.execute(sql)
-        return self.cursor.fetchall()
+        return list(self.cursor.fetchall())
+
+    def select_latest_after_insert(self, keyname, table=''):
+        sql = 'SELECT * FROM {} WHERE {} IN (SELECT MAX({}) FROM {})'.format(self.table_name, keyname, keyname, self.table_name)
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()
+
+    def select_latest_after_update(self, table=''):
+        sql = 'SELECT * FROM {} WHERE updateTime IN (SELECT MAX(updateTime) FROM {})'.format(self.table_name)
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()
+        pass
+

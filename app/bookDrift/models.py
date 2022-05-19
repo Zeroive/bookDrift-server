@@ -1,7 +1,11 @@
 from tools.db import DB
+from datetime import datetime
 
 
 class BOOKDRIFT(DB):
+    def __init__(self):
+        DB.__init__(self)
+        self.table_name = 'book_drift'
 
     def insert(self, collectionid, lenderid, borrowerid=-1, state=0):
         sql = 'INSERT INTO book_drift(collectionId, lenderId, borrowerId, state) VALUES ({}, {}, {}, {})' \
@@ -14,26 +18,42 @@ class BOOKDRIFT(DB):
             .format(collectionid, lenderid, borrowerid)
         return self.select_one(sql)
 
-    def find_by_lenderid(self, lenderid):
-        sql = 'SELECT driftId, BD.collectionId, lenderId, newold, note, num, charge, driftTime, BC.createTime, bookName, ' \
-              'thumbUrl, author, publishTime, publisher, price, BD.state ' \
-              'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
-              'ON BD.lenderid={} AND BD.collectionId=BC.collectionId ' \
-              'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId' \
-            .format(lenderid)
+    def find_by_driftid(self, driftid):
+        sql = 'SELECT * FROM book_drift WHERE driftId={}'.format(driftid)
+        return self.select_one(sql)
 
+    def find_by_lenderid(self, lenderid):
+        sql = 'SELECT driftId, BD.collectionId, lenderId, borrowerId, newold, note, num, charge, driftTime, ' \
+              'BC.updateTime, bookName, thumbUrl, author, publishTime, publisher, price, BD.state, BD.createTime ' \
+              'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
+              'ON BD.collectionId=BC.collectionId ' \
+              'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
+              'WHERE BD.lenderId={}' \
+            .format(lenderid)
         return self.select_all(sql)
 
-    def update_borrowerid_by_driftid(self, driftid, borrowerid, state):
-        sql = 'UPDATE book_drift SET borrowerId={},state={} WHERE driftId={}'.format(borrowerid, state, driftid)
+    def find_by_borrowerid(self, borrowerid):
+        sql = 'SELECT driftId, BD.collectionId, lenderId, borrowerId, newold, note, num, charge, driftTime, price, ' \
+              'BD.updateTime createTime, bookName, thumbUrl, author, publishTime, publisher,  BD.state, BC.bookId ' \
+              'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
+              'ON BD.collectionId=BC.collectionId ' \
+              'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
+              'WHERE BD.borrowerId={}' \
+            .format(borrowerid)
+        return self.select_all(sql)
+
+    def update_borrowerid_by_driftid(self, driftid, borrowerid, state, historyid):
+        sql = 'UPDATE book_drift SET borrowerId={},state={},historyId={} WHERE driftId={}'\
+            .format(borrowerid, state, historyid, driftid)
         self.insert_update_delete(sql)
 
     def find_driftbook_detail_by_driftid(self, driftid):
         sql = 'SELECT driftId, BD.createTime, BD.state, lenderId, borrowerId, BC.userId ownerId, BC.bookId,' \
               'BC.newold, BC.note, BC.charge, BC.driftTime, UI1.nickName lenderName, UI1.avatarUrl lenderAvatarUrl,' \
               'UI2.nickName borrowerName, UI2.avatarUrl borrowerAvatarUrl, bookName, thumbUrl, author, publisher,' \
-              'price, UI2.avatarUrl borrowerAvatarUrl ' \
-              'FROM book_drift as BD JOIN book_collection AS BC ON BD.collectionId=BC.collectionId ' \
+              'price, UI2.avatarUrl borrowerAvatarUrl, libraryName ' \
+              'FROM book_drift as BD ' \
+              'JOIN book_collection AS BC ON BD.collectionId=BC.collectionId ' \
               'JOIN user_info AS UI1 ON BD.lenderId = UI1.userId ' \
               'JOIN user_info AS UI2 ON BD.borrowerId = UI2.userId ' \
               'JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
@@ -43,11 +63,21 @@ class BOOKDRIFT(DB):
         pass
 
 
+
 if __name__ == '__main__':
+    BD = BOOKDRIFT()
     # print(BOOKDRIFT().findbyowneridandbookId(1, 525148))
     # print(BOOKDRIFT().find_by_lenderid(1))
     # BOOKDRIFT().update_borrowerid_by_driftid(2, 1)
-    print(BOOKDRIFT().find_driftbook_detail_by_driftid(5))
+    # print(BOOKDRIFT().find_driftbook_detail_by_driftid(5))
+    # books = BD.find_by_lenderid(1) + BD.find_by_borrowerid(1)
+    # books.sort(key=lambda x: x['updateTime'], reverse=True)
+    # for i in books:
+    #     i['date'] = i['updateTime'].strftime('%Y-%m-%d')
+    #     i['time'] = i['updateTime'].strftime('%H:%M:%S')
+    # keys = ['bookName', 'state', 'lenderId', 'borrowerId', 'driftId', 'date', 'time']
+    # books = [dict((key, i[key]) for key in keys) for i in books]
+    # print(books)
     pass
 
 # {

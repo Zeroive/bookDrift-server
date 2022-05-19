@@ -75,9 +75,15 @@ def update_user_address():
     # print(request_data)
     areacode = int(request_data['id'])
     # 设置省市区
+    request_data['province'] = ""
+    request_data['city'] = ""
+    request_data['district'] = ""
+
     request_data['province'] = areaList['province_list'][str(int(areacode/10000)*10000)]
-    request_data['city'] = areaList['city_list'][str(int(areacode/100)*100)]
-    request_data['district'] = request_data['fullname']
+    if areacode % 10000 != 0:
+        request_data['city'] = areaList['city_list'][str(int(areacode/100)*100)]
+    if areacode % 100 != 0:
+        request_data['district'] = request_data['fullname']
     request_data['latitude'] = request_data['location']['latitude']
     request_data['longitude'] = request_data['location']['longitude']
     userService.updatebyuserid(request_data, request_data['accessToken'].split('-')[0])

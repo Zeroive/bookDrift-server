@@ -5,6 +5,7 @@ from app.userLibrary.views import userLibrary
 from app.bookDrift.views import bookDrift
 from app.bookCollection.views import bookCollection
 from app.userCF.views import userCF
+from app.remark.views import remark
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ app.register_blueprint(userLibrary)
 app.register_blueprint(bookDrift)
 app.register_blueprint(bookCollection)
 app.register_blueprint(userCF)
+app.register_blueprint(remark)
 
 
 @app.route('/')

@@ -8,7 +8,7 @@ class RECOMMENDER(DB):
     # metric：表示使用计算相似度的方法
     # n：表示推荐book的个数
     def __init__(self, k=3, metric='pearson', n=15):
-
+        DB.__init__(self)
         self.k = k
         self.n = n
         self.username2id = {}
@@ -18,8 +18,16 @@ class RECOMMENDER(DB):
         self.metric = metric
         if self.metric == 'pearson':
             self.fn = self.pearson
+
+        sql = 'SELECT * FROM recommend_score'
+        recommendscore = self.select_all(sql)
+        data = {}
+        for i in recommendscore:
+            if i['userId'] not in data:
+                data[i['userId']] = {}
+            data[i['userId']][i['bookId']] = float(i['score'])
         # if type(data).__name__ == 'dict':
-        #     self.data = data
+        self.data = data
 
     def convertProductID2name(self, id):
         if id in self.productid2name:
@@ -29,12 +37,12 @@ class RECOMMENDER(DB):
 
     # 定义的计算相似度的公式，用的是皮尔逊相关系数计算方法
     def pearson(self, rating1, rating2):
-        sum_xy = 0
-        sum_x = 0
-        sum_y = 0
-        sum_x2 = 0
-        sum_y2 = 0
-        n = 0
+        sum_xy = 0.0
+        sum_x = 0.0
+        sum_y = 0.0
+        sum_x2 = 0.0
+        sum_y2 = 0.0
+        n = 0.0
         for key in rating1:
             if key in rating2:
                 n += 1
@@ -45,11 +53,15 @@ class RECOMMENDER(DB):
                 sum_y += y
                 sum_x2 += pow(x, 2)
                 sum_y2 += pow(y, 2)
-        if n == 0:
+        if n == 0 or n == 1:
             return 0
 
-        # 皮尔逊相关系数计算公式
+        # 皮尔逊相关系数计算公式 50          10         2            50           10       2
         denominator = sqrt(sum_x2 - pow(sum_x, 2) / n) * sqrt(sum_y2 - pow(sum_y, 2) / n)
+        # print(sum_xy, sum_x, sum_y, sum_x2, sum_y2, n)
+        # print((n * sum_xy - sum_x * sum_y), (n * sum_x2 - sum_x * sum_x), (n * sum_y2 - sum_y * sum_y))
+        # denominator = (n * sum_xy - sum_x * sum_y) / sqrt((n * sum_x2 - sum_x * sum_x) * (n * sum_y2 - sum_y * sum_y))
+
         if denominator == 0:
             return 0
         else:
@@ -59,7 +71,9 @@ class RECOMMENDER(DB):
         distances = []
         for instance in self.data:
             if instance != username:
+                # print(instance)
                 distance = self.fn(self.data[username], self.data[instance])
+                # print(distance)
                 distances.append((instance, distance))
 
         distances.sort(key=lambda artistTuple: artistTuple[1], reverse=True)
@@ -112,4 +126,5 @@ class RECOMMENDER(DB):
 
 
 if __name__ == "__main__":
+
     pass

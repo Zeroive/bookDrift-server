@@ -5,6 +5,9 @@ import time
 
 
 class USER(DB):
+    def __init__(self):
+        DB.__init__(self)
+        self.table_name = 'user_info'
 
     def find_by_userid(self, userid):
         sql = 'SELECT * FROM user_info WHERE userId = "{}"'.format(userid)
@@ -16,9 +19,9 @@ class USER(DB):
 
     def insertOne(self, data):
         sql = 'INSERT INTO user_info(openId, sessionKey, nickName, avatarUrl, city, gender, province, ' \
-              'country, language) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}")'.\
+              'district, language) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}", "{}")'.\
             format(data['openId'], data['sessionKey'], data['nickName'], data['avatarUrl'], data['city'],
-                   data['gender'], data['province'], data['country'], data['language'])
+                   data['gender'], data['province'], data['district'], data['language'])
         self.insert_update_delete(sql)
 
     def updatebyuserid(self, map, openid):
@@ -41,23 +44,27 @@ class USER(DB):
 
 
 if __name__ == '__main__':
+    user = USER()
     data = {
-        'openId': '333',
-        'avatarUrl': "https://thirdwx.qlogo.cn/mmopen/vi_32/8O7wCx1X6Whpk5CWDmyUstgJCicHTOn2MfHy6nvAR6FchO0ib9onlQwibKlTMDzB2icDvdI10bqSiaqRibnqMgFBMziaw/132",
+        'openId': '',
+        'avatarUrl': "",
         'city': "",
-        'country': "",
-        'fontcolor': "white",
+        'district': "",
+        'fontcolor': "",
         'gender': 0,
-        'language': "zh_CN",
-        'name': "Leisure",
-        'nickName': "╰⋛⋋⊱⋋⋌⊰⋌⋚╯",
+        'language': "",
+        'name': "",
+        'nickName': 'tttt',
         'province': "",
-        'session_key': '111',
+        'sessionKey': '',
         'state': 0
     }
 
     time_start = time.time()  # 记录开始时间
-    print(USER().find_by_userid(1))
+    # for i in range(0, 10):
+    #     data['nickName'] = 'test'+str(i)
+    user.insertOne(data)
+    print(user.select_latest_after_insert('user_info', 'userId'))
     time_end = time.time()  # 记录结束时间
     time_sum = time_end - time_start  # 计算的时间差为程序的执行时间，单位为秒/s
     print(time_sum)
