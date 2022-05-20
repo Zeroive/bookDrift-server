@@ -28,8 +28,14 @@ def find_book_by_name():
     response_data = bookService.find_all_like_bookname(request_data['bookName'])
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)
 
+
 @book.route('/findbybookid', methods=['POST'])
 def find_by_bookid():
     request_data = json.loads(request.get_data().decode('utf-8'))
-    response_data = bookService.find_by_bookid(request_data['bookId'])
+    Mbook = bookService.find_by_bookid(request_data['bookId'])
+    if requests.get(Mbook['thumbUrl']).status_code == 200:
+        Mbook['isthumbUrlWork'] = True
+    else:
+        Mbook['isthumbUrlWork'] = False
+    response_data = Mbook
     return json.dumps(response_data, indent=4, sort_keys=True, default=str, ensure_ascii=False)

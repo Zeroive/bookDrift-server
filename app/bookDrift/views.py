@@ -146,10 +146,12 @@ def get_drift_book_by_driftid():
 @bookDrift.route('/record', methods=['POST'])
 def get_record_by_userid():
     request_data = json.loads(request.get_data().decode('utf-8'))  # 将前端Json数据转为字典
-
     books = bookDriftService.find_by_lenderid(request_data['userId']) + bookDriftService.find_by_borrowerid(request_data['userId'])
+    for i in books:
+        if not i.get('updateTime'):
+            print(i)
     # 倒序排序
-    books.sort(key=lambda x: x['updateTime'], reverse=True)
+    books = sorted(books, key=lambda x: x['updateTime'], reverse=True)
     for i in books:
         i['date'] = i['updateTime'].strftime('%Y/%m/%d')
         i['time'] = i['updateTime'].strftime('%H:%M:%S')

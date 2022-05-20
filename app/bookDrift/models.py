@@ -24,7 +24,7 @@ class BOOKDRIFT(DB):
 
     def find_by_lenderid(self, lenderid):
         sql = 'SELECT driftId, BD.collectionId, lenderId, borrowerId, newold, note, num, charge, driftTime, ' \
-              'BC.updateTime, bookName, thumbUrl, author, publishTime, publisher, price, BD.state, BD.createTime ' \
+              'BD.updateTime, bookName, thumbUrl, author, publishTime, publisher, price, BD.state, BD.createTime ' \
               'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
               'ON BD.collectionId=BC.collectionId ' \
               'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
@@ -34,7 +34,7 @@ class BOOKDRIFT(DB):
 
     def find_by_borrowerid(self, borrowerid):
         sql = 'SELECT driftId, BD.collectionId, lenderId, borrowerId, newold, note, num, charge, driftTime, price, ' \
-              'BD.updateTime createTime, bookName, thumbUrl, author, publishTime, publisher,  BD.state, BC.bookId ' \
+              'BD.updateTime, BD.createTime, bookName, thumbUrl, author, publishTime, publisher,  BD.state, BC.bookId ' \
               'FROM book_drift AS BD LEFT JOIN book_collection AS BC ' \
               'ON BD.collectionId=BC.collectionId ' \
               'LEFT JOIN book_library AS BL ON BC.bookId=BL.bookId ' \
