@@ -8,8 +8,8 @@ from tools.areaList import areaList
 user = Blueprint('user', __name__, url_prefix="/user")
 userService = USER()
 
-appID = 'wx1f0a49be56df29ea'  # 开发者关于微信小程序的appID
-appSecret = '3446adde90cbf3b283d6ab36d50ac1ec'  # 开发者关于微信小程序的appSecret
+appID = ''  # 开发者关于微信小程序的appID
+appSecret = ''  # 开发者关于微信小程序的appSecret
 
 
 @user.route('/')
